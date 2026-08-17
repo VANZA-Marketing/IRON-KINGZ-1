@@ -1,0 +1,14 @@
+{
+  "name": "Iron Kingz",
+  "short_name": "Iron Kingz",
+  "description": "Honolulu combat sports & martial arts gym.",
+  "icons": [
+    { "src": "/favicon-32.png", "type": "image/png", "sizes": "32x32" },
+    { "src": "/favicon-180.png", "type": "image/png", "sizes": "180x180" },
+    { "src": "/favicon-512.png", "type": "image/png", "sizes": "512x512" }
+  ],
+  "theme_color": "#080808",
+  "background_color": "#080808",
+  "display": "standalone",
+  "start_url": "/"
+}

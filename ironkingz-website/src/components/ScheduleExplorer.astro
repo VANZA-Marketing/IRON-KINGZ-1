@@ -1,0 +1,268 @@
+---
+import { sessions, scheduleNotes, DAY_ORDER, DAY_FULL, type Day } from '../data/schedule';
+import { programs } from '../data/programs';
+import { getCoach } from '../data/coaches';
+import { bookHref } from '../lib/booking';
+
+const programOpts = programs.map((p) => ({ slug: p.slug, name: p.name }));
+const audienceOpts = [
+  { val: 'all', label: 'All' },
+  { val: 'keiki', label: 'Keiki' },
+  { val: 'youth', label: 'Youth' },
+  { val: 'adults', label: 'Adults' },
+];
+
+const rowsByDay = DAY_ORDER.map((d) => ({
+  day: d as Day,
+  list: sessions.filter((s) => s.days.includes(d as Day)).sort((a, b) => a.start.localeCompare(b.start)),
+}));
+
+function coachName(slug?: string) {
+  if (!slug) return '';
+  const c = getCoach(slug);
+  return c ? c.name : '';
+}
+const bookBase = bookHref();
+---
+<div id="schedule" data-schedule>
+  <!-- Filters -->
+  <div class="rounded-(--radius-lg) border border-(--color-line) bg-(--color-charcoal) p-4 md:p-5">
+    <div class="flex flex-col gap-4">
+      <!-- Program -->
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="footer-head text-(--color-gold) w-20 shrink-0">Program</span>
+        <div class="flex flex-wrap gap-2" role="group" aria-label="Filter by program">
+          <button type="button" class="filter-chip is-on" data-filter="program" data-value="all">All</button>
+          {programOpts.map((p) => (
+            <button type="button" class="filter-chip" data-filter="program" data-value={p.slug}>{p.name.replace('Iron Kingz ', '').replace('808 Top Team ', '').replace('HFA ', '')}</button>
+          ))}
+        </div>
+      </div>
+      <!-- Day -->
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="footer-head text-(--color-gold) w-20 shrink-0">Day</span>
+        <div class="flex flex-wrap gap-2" role="group" aria-label="Filter by day">
+          <button type="button" class="filter-chip is-on" data-filter="day" data-value="all">All</button>
+          <button type="button" class="filter-chip" data-filter="day" data-value="today">Today</button>
+          {DAY_ORDER.map((d) => (
+            <button type="button" class="filter-chip" data-filter="day" data-value={d}>{d}</button>
+          ))}
+        </div>
+      </div>
+      <!-- Audience -->
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="footer-head text-(--color-gold) w-20 shrink-0">For</span>
+        <div class="flex flex-wrap gap-2" role="group" aria-label="Filter by audience">
+          {audienceOpts.map((a) => (
+            <button type="button" class:list={['filter-chip', a.val === 'all' && 'is-on']} data-filter="audience" data-value={a.val}>{a.label}</button>
+          ))}
+        </div>
+      </div>
+    </div>
+    <p id="schedule-count" class="mt-4 text-xs text-(--color-bone-dim)" aria-live="polite"></p>
+  </div>
+
+  <!-- Week grid -->
+  <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4" id="schedule-grid">
+    {rowsByDay.map((g) => (
+      <section class="day-col rounded-(--radius-lg) border border-(--color-line) bg-(--color-charcoal) overflow-hidden flex flex-col" data-day-col={g.day}>
+        <h2 class="px-4 py-3 border-b border-(--color-line) font-display uppercase text-(--color-gold) flex items-center justify-between">
+          {DAY_FULL[g.day]}
+          <span class="day-empty hidden text-xs font-body normal-case tracking-normal text-(--color-bone-dim)/70">—</span>
+        </h2>
+        <ul class="divide-y divide-(--color-line) flex-1">
+          {g.list.map((s) => (
+            <li
+              class="session-row"
+              data-session
+              data-program={s.program}
+              data-day={g.day}
+              data-audience={s.audience}
+              data-title={s.title}
+              data-time={`${s.startLabel}–${s.endLabel}`}
+              data-level={s.level}
+              data-age={s.ageLabel}
+              data-coach={coachName(s.coachSlug)}
+              data-gear={s.gear ?? ''}
+              data-program-name={programs.find((p) => p.slug === s.program)?.name ?? s.program}
+            >
+              <button type="button" class="session-open w-full text-left px-4 py-3.5 hover:bg-white/[0.03] transition-colors">
+                <div class="flex items-center gap-3">
+                  <span class="tnum text-sm font-semibold text-(--color-bone)">{s.startLabel}</span>
+                </div>
+                <div class="mt-1 font-display uppercase text-sm text-(--color-bone) leading-tight">{s.title}</div>
+                <div class="text-xs text-(--color-bone-dim)">{s.ageLabel}</div>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+
+  <!-- No results -->
+  <p id="schedule-none" class="hidden mt-8 text-center text-(--color-bone-dim)">No classes match these filters. <button type="button" id="schedule-reset" class="text-(--color-gold) hover:underline">Reset filters</button>.</p>
+
+  <!-- Weekend notes -->
+  <div class="mt-10 rounded-(--radius-lg) border border-(--color-line) bg-(--color-ink) p-5">
+    <h3 class="footer-head text-(--color-gold)">Weekend & Special Availability</h3>
+    <ul class="mt-3 grid gap-2 sm:grid-cols-2">
+      {scheduleNotes.map((n) => (
+        <li class="text-sm text-(--color-bone-dim)">
+          <span class="text-(--color-bone) font-semibold">{programs.find((p) => p.slug === n.program)?.name}:</span> {n.label} — {n.detail}
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<!-- Class detail drawer -->
+<div id="class-drawer" class="fixed inset-0 z-(--z-drawer) invisible opacity-0 transition-opacity duration-300" aria-hidden="true">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-drawer-overlay></div>
+  <div class="absolute right-0 top-0 h-full w-full max-w-md bg-(--color-charcoal) border-l border-(--color-line) translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col" role="dialog" aria-modal="true" aria-labelledby="drawer-title" data-drawer-panel>
+    <div class="flex items-center justify-between px-5 h-16 border-b border-(--color-line)">
+      <span class="footer-head text-(--color-gold)" data-d="program-name"></span>
+      <button type="button" id="drawer-close" class="w-11 h-11 inline-flex items-center justify-center text-(--color-bone) hover:text-(--color-gold)" aria-label="Close">
+        <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="p-5 overflow-y-auto flex-1 space-y-5">
+      <h2 id="drawer-title" class="text-[length:var(--text-h3)] font-display uppercase" data-d="title"></h2>
+      <dl class="grid grid-cols-3 gap-3 text-sm">
+        <div class="col-span-3 sm:col-span-1"><dt class="text-(--color-bone-dim)/70 text-xs uppercase tracking-wide">Time</dt><dd class="text-(--color-bone) tnum" data-d="time"></dd></div>
+        <div class="col-span-3 sm:col-span-1"><dt class="text-(--color-bone-dim)/70 text-xs uppercase tracking-wide">Level</dt><dd class="text-(--color-bone)" data-d="level"></dd></div>
+        <div class="col-span-3 sm:col-span-1"><dt class="text-(--color-bone-dim)/70 text-xs uppercase tracking-wide">Ages</dt><dd class="text-(--color-bone)" data-d="age"></dd></div>
+      </dl>
+      <div><dt class="text-(--color-bone-dim)/70 text-xs uppercase tracking-wide">Coach</dt><dd class="text-(--color-bone)" data-d="coach"></dd></div>
+      <div data-d-gear-wrap><dt class="text-(--color-bone-dim)/70 text-xs uppercase tracking-wide">Equipment</dt><dd class="text-(--color-bone-dim)" data-d="gear"></dd></div>
+    </div>
+    <div class="p-4 border-t border-(--color-line)">
+      <a id="drawer-book" href={bookBase} class="inline-flex w-full items-center justify-center min-h-[48px] rounded-(--radius) bg-(--color-bone) text-(--color-ink) font-display font-bold uppercase text-sm tracking-wide" data-event="program_book_click">Book Your Intro</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .filter-chip {
+    padding: 0.4rem 0.85rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-line-strong);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-bone-dim);
+    transition: all 0.18s ease;
+    cursor: pointer;
+    min-height: 36px;
+  }
+  .filter-chip:hover { border-color: var(--color-gold); color: var(--color-bone); }
+  .filter-chip.is-on {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+</style>
+
+<script>
+  (function () {
+    const root = document.querySelector('[data-schedule]');
+    if (!root) return;
+    const dayMap = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const today = dayMap[new Date().getDay()];
+
+    const state = { program: 'all', day: 'all', audience: 'all' };
+    const rows = Array.from(root.querySelectorAll<HTMLElement>('[data-session]'));
+    const cols = Array.from(root.querySelectorAll<HTMLElement>('[data-day-col]'));
+    const countEl = document.getElementById('schedule-count');
+    const noneEl = document.getElementById('schedule-none');
+
+    function apply() {
+      let visible = 0;
+      rows.forEach((r) => {
+        const p = r.dataset.program!;
+        const d = r.dataset.day!;
+        const a = r.dataset.audience!;
+        const dayOk = state.day === 'all' || (state.day === 'today' ? d === today : d === state.day);
+        const progOk = state.program === 'all' || p === state.program;
+        const audOk = state.audience === 'all' || a === state.audience || (state.audience !== 'all' && a === 'all');
+        const show = dayOk && progOk && audOk;
+        r.hidden = !show;
+        if (show) visible++;
+      });
+      // Hide empty day columns
+      cols.forEach((col) => {
+        const anyVisible = Array.from(col.querySelectorAll<HTMLElement>('[data-session]')).some((r) => !r.hidden);
+        col.hidden = !anyVisible;
+      });
+      if (countEl) countEl.textContent = `${visible} class${visible === 1 ? '' : 'es'} shown`;
+      if (noneEl) noneEl.classList.toggle('hidden', visible !== 0);
+    }
+
+    root.querySelectorAll<HTMLButtonElement>('.filter-chip').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const f = chip.dataset.filter as 'program' | 'day' | 'audience';
+        (state as any)[f] = chip.dataset.value;
+        root.querySelectorAll<HTMLButtonElement>(`.filter-chip[data-filter="${f}"]`).forEach((c) => c.classList.toggle('is-on', c === chip));
+        apply();
+      });
+    });
+    document.getElementById('schedule-reset')?.addEventListener('click', () => {
+      state.program = 'all'; state.day = 'all'; state.audience = 'all';
+      root.querySelectorAll<HTMLButtonElement>('.filter-chip').forEach((c) => c.classList.toggle('is-on', c.dataset.value === 'all'));
+      apply();
+    });
+
+    // Deep-link: /schedule?program=boxing
+    const qp = new URLSearchParams(location.search).get('program');
+    if (qp) {
+      const chip = root.querySelector<HTMLButtonElement>(`.filter-chip[data-filter="program"][data-value="${qp}"]`);
+      chip?.click();
+    } else {
+      apply();
+    }
+
+    // ---- Drawer ----
+    const drawer = document.getElementById('class-drawer');
+    const panel = drawer?.querySelector('[data-drawer-panel]') as HTMLElement | null;
+    const bookLink = document.getElementById('drawer-book') as HTMLAnchorElement | null;
+    let lastFocus: HTMLElement | null = null;
+
+    function setText(sel: string, val: string) {
+      const el = drawer?.querySelector(`[data-d="${sel}"]`);
+      if (el) el.textContent = val;
+    }
+    function openDrawer(row: HTMLElement) {
+      if (!drawer || !panel) return;
+      lastFocus = document.activeElement as HTMLElement;
+      setText('program-name', row.dataset.programName || '');
+      setText('title', row.dataset.title || '');
+      setText('time', row.dataset.time || '');
+      setText('level', row.dataset.level || '');
+      setText('age', row.dataset.age || '');
+      setText('coach', row.dataset.coach || 'Iron Kingz coaching staff');
+      const gear = row.dataset.gear || '';
+      const gearWrap = drawer.querySelector('[data-d-gear-wrap]') as HTMLElement;
+      if (gearWrap) gearWrap.style.display = gear ? '' : 'none';
+      setText('gear', gear);
+      if (bookLink) {
+        bookLink.href = `/book?program=${row.dataset.program}`;
+      }
+      drawer.classList.remove('invisible', 'opacity-0');
+      drawer.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => panel.classList.remove('translate-x-full'));
+      document.documentElement.classList.add('scroll-locked');
+      (document.getElementById('drawer-close') as HTMLElement)?.focus();
+    }
+    function closeDrawer() {
+      if (!drawer || !panel) return;
+      panel.classList.add('translate-x-full');
+      drawer.setAttribute('aria-hidden', 'true');
+      document.documentElement.classList.remove('scroll-locked');
+      setTimeout(() => drawer.classList.add('invisible', 'opacity-0'), 300);
+      lastFocus?.focus();
+    }
+    rows.forEach((r) => r.querySelector('.session-open')?.addEventListener('click', () => openDrawer(r)));
+    document.getElementById('drawer-close')?.addEventListener('click', closeDrawer);
+    drawer?.querySelector('[data-drawer-overlay]')?.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && drawer?.getAttribute('aria-hidden') === 'false') closeDrawer(); });
+  })();
+</script>

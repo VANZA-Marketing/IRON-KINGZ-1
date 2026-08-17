@@ -1,0 +1,24 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { site } from '../data/site';
+---
+<LegalLayout title="Terms of Use" description="Terms for using the Iron Kingz website." path="/terms">
+  <div class="legal-note">These terms are being finalized and should be reviewed by legal counsel before launch. Questions? Contact <a href={`mailto:${site.email}`}>{site.email}</a>.</div>
+
+  <p>By using this website you agree to these terms. If you do not agree, please do not use the site.</p>
+
+  <h2>Use of the site</h2>
+  <p>This site provides information about Iron Kingz programs, schedule, and memberships. Details such as pricing, schedule, and class availability may change; contact the gym to confirm current information.</p>
+
+  <h2>Bookings & participation</h2>
+  <p>Booking an introductory class is a request to attend. Participation in training requires a completed liability waiver. Combat sports involve inherent physical risk.</p>
+
+  <h2>Intellectual property</h2>
+  <p>Content, photography, and branding on this site are the property of {site.legalName} unless otherwise noted, and may not be reused without permission.</p>
+
+  <h2>Limitation of liability</h2>
+  <p>The site is provided “as is.” To the extent permitted by law, {site.legalName} is not liable for damages arising from use of the site.</p>
+
+  <h2>Contact</h2>
+  <p>{site.legalName}<br />{site.addressLine}<br /><a href={site.phoneHref}>{site.phone}</a></p>
+</LegalLayout>

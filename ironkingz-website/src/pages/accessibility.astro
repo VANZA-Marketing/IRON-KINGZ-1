@@ -1,0 +1,23 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { site } from '../data/site';
+---
+<LegalLayout title="Accessibility" description="Iron Kingz is committed to an accessible website for everyone." path="/accessibility">
+  <p>Iron Kingz is committed to making this website usable for as many people as possible, and we aim to meet <strong>WCAG 2.2 Level AA</strong> where practical.</p>
+
+  <h2>What we do</h2>
+  <ul>
+    <li>Semantic headings and landmarks for screen readers.</li>
+    <li>Keyboard-accessible navigation, menus, and forms with visible focus.</li>
+    <li>Descriptive alternative text for meaningful images.</li>
+    <li>Color contrast checked for text and interactive elements.</li>
+    <li>Support for reduced-motion preferences.</li>
+    <li>A “skip to content” link for keyboard users.</li>
+  </ul>
+
+  <h2>Ongoing work</h2>
+  <p>Accessibility is an ongoing effort. If you encounter a barrier or have a suggestion, we want to hear from you.</p>
+
+  <h2>Contact us</h2>
+  <p>Email <a href={`mailto:${site.email}`}>{site.email}</a> or call <a href={site.phoneHref}>{site.phone}</a> and we’ll do our best to help or provide the information you need in another format.</p>
+</LegalLayout>

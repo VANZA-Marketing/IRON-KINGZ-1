@@ -1,0 +1,76 @@
+---
+import { Image } from 'astro:assets';
+import Logo from './Logo.astro';
+import { img, alt } from '../data/images';
+
+/**
+ * HERO — BXR-inspired: full-bleed photography, centered condensed headline,
+ * near-monochrome (gold used only as a hairline whisper), and three photo
+ * entry-tiles across the bottom as the primary calls to action.
+ * VIDEO can later replace the <Image> background in the marked slot.
+ */
+const poster = img('boxing-hero');
+
+const tiles = [
+  { label: 'Train', href: '/programs', image: 'kids-boxer-portrait', pos: 'object-[center_26%]' },
+  { label: 'Schedule', href: '/schedule', image: 'kids-boxer-ring', pos: 'object-[center_32%]' },
+  { label: 'Book Your Intro', href: '/book', image: 'kids-ringside', pos: 'object-[center_20%]' },
+];
+---
+<section class="relative min-h-[92vh] flex flex-col overflow-hidden grain">
+  <!-- Background media (static filler). VIDEO GOES HERE LATER. -->
+  <div class="absolute inset-0 -z-10">
+    <Image
+      src={poster}
+      alt={alt('boxing-hero')}
+      widths={[768, 1280, 1920]}
+      sizes="100vw"
+      class="h-full w-full object-cover object-center"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <!-- Cinematic overlays: lighter so the photo reads, dark only near the tiles -->
+    <div class="absolute inset-0 bg-(--color-ink)/30"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-(--color-ink)/95 via-transparent to-(--color-ink)/25"></div>
+  </div>
+
+  <!-- Centered brand mark -->
+  <div class="flex-1 flex items-center justify-center px-6 pt-24">
+    <h1 class="sr-only">Iron Kingz — Honolulu Combat Sports &amp; Martial Arts Gym</h1>
+    <Logo class="h-20 sm:h-24 md:h-32 w-auto drop-shadow-[0_10px_40px_rgba(0,0,0,0.6)]" title="Iron Kingz — The Kingdom" />
+  </div>
+
+  <!-- Entry tiles (primary CTAs) -->
+  <div class="relative border-t border-(--color-line)/60">
+    <div class="flex overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:grid sm:grid-cols-3 sm:overflow-visible">
+      {tiles.map((t, i) => (
+        <a
+          href={t.href}
+          aria-label={t.label}
+          class:list={[
+            'group relative overflow-hidden shrink-0 w-[88%] h-64 snap-start',
+            'sm:w-auto sm:h-52',
+            i > 0 && 'sm:border-l sm:border-(--color-line)/60',
+          ]}
+        >
+          <Image
+            src={img(t.image)}
+            alt=""
+            widths={[400, 600, 800]}
+            sizes="(max-width: 640px) 88vw, 33vw"
+            class:list={[
+              'absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105',
+              t.pos,
+            ]}
+            loading="eager"
+          />
+          <div class="absolute inset-0 bg-(--color-ink)/60 group-hover:bg-(--color-ink)/45 transition-colors duration-300"></div>
+          <div class="absolute inset-0 flex items-end sm:items-center justify-between p-5 sm:px-6">
+            <span class="font-display uppercase tracking-wide text-(--color-bone) text-lg md:text-xl">{t.label}</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" class="text-(--color-bone) opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 shrink-0" aria-hidden="true"><path d="M4 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

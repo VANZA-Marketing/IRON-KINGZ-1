@@ -1,0 +1,150 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import CoachCard from '../components/CoachCard.astro';
+import Button from '../components/Button.astro';
+import { coaches } from '../data/coaches';
+import { img, alt, galleryKeys } from '../data/images';
+import { bookHref, introCtaLabel } from '../lib/booking';
+
+const values = [
+  { t: 'Discipline', d: 'Show up, do the work, and hold the standard — on the mats and off them.' },
+  { t: 'Dedication', d: 'Progress is earned in the reps nobody sees. We train for the long haul.' },
+  { t: 'Sacrifice', d: 'Growth costs something. We give what it takes to become better.' },
+  { t: 'Humility', d: 'Every belt, every record starts with a beginner willing to learn.' },
+  { t: 'Hard Work', d: 'No shortcuts. The Kingdom is built one honest round at a time.' },
+];
+const previewCoaches = coaches.slice(0, 4);
+const storyGallery = galleryKeys.slice(0, 8);
+---
+<Layout
+  title="Our Story — Iron Kingz Honolulu"
+  description="Why Iron Kingz exists: a Honolulu fight gym built on discipline, mentorship, and community — building champions in life, not only in the ring."
+  path="/our-story"
+  solidHeader
+>
+  <PageHero
+    eyebrow="Our Story"
+    title="Built for Honolulu. Built for The Kingdom."
+    subtitle="Iron Kingz is more than a gym — it’s a community grounded in discipline, mentorship, and the belief that training changes lives."
+    image="community-trophies"
+    crumbs={[{ label: 'Our Story' }]}
+  />
+
+  <!-- Why Iron Kingz exists -->
+  <section class="py-16 md:py-20 bg-(--color-ink)">
+    <div class="container-ik max-w-3xl">
+      <SectionHeading eyebrow="Why We Exist" title="A serious room with an open door." />
+      <div class="mt-6 space-y-4 text-lg text-(--color-bone-dim) leading-relaxed">
+        <p>Iron Kingz is more than just a gym — it’s a tight-knit community of like-minded individuals who support and motivate each other. Our team of experienced instructors are accomplished fighters and skilled trainers, each specializing in disciplines like Brazilian Jiu-Jitsu, Muay Thai, boxing, wrestling, and more.</p>
+        <p>Above all, it’s a safe and supportive environment where everyone, regardless of their background or skill level, can train, learn, and achieve their goals. The mission has always been bigger than fitness: to mentor young people, teach discipline and life skills, and support students inside and outside the gym.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Founder story -->
+  <section class="py-16 md:py-20 bg-(--color-charcoal) border-y border-(--color-line)">
+    <div class="container-ik grid gap-10 lg:grid-cols-2 lg:items-center">
+      <div class="relative overflow-hidden rounded-(--radius-lg) vignette" data-reveal>
+        <Image src={img('kids-handwrap')} alt={alt('kids-handwrap')} widths={[500, 800]} sizes="(max-width:1024px) 100vw, 50vw" class="w-full object-cover aspect-[4/5]" loading="lazy" />
+      </div>
+      <div data-reveal>
+        <SectionHeading eyebrow="The Founder" title="It started with boxing." />
+        {/* TODO(owner): replace with the founder's approved personal boxing story. Treat with respect and maturity; do not sensationalize. */}
+        <div class="mt-6 space-y-4 text-(--color-bone-dim) leading-relaxed">
+          <p>Boxing gave the founder of Iron Kingz a foundation — discipline, direction, and a way to give back. That experience became the blueprint for the gym: meet people where they are, hold them to a standard, and help them build something real.</p>
+          <p>Iron Kingz carries that forward every day, turning training into a path for personal transformation and leadership.</p>
+        </div>
+        <div class="mt-6"><Button href="/coaches" variant="outline">Meet the Coaches</Button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Meaning of The Kingdom -->
+  <section class="py-16 md:py-20 bg-(--color-ink)">
+    <div class="container-ik max-w-3xl text-center">
+      <SectionHeading eyebrow="The Kingdom" title="What “The Kingdom” means." align="center" />
+      <p class="mt-6 text-lg text-(--color-bone-dim) leading-relaxed">
+        The Kingdom is the people. It’s the beginner and the champion training in the
+        same room, the coach staying late, the teammate holding pads one more round.
+        Everyone who trains here is part of it — and everyone is expected to build it up.
+      </p>
+    </div>
+  </section>
+
+  <!-- Core values -->
+  <section class="py-16 md:py-20 bg-(--color-charcoal) border-y border-(--color-line)">
+    <div class="container-ik">
+      <SectionHeading eyebrow="Core Values" title="Five things we don’t compromise." />
+      <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {values.map((v, i) => (
+          <div class="corner-bracket rounded-(--radius-lg) border border-(--color-line) bg-(--color-ink) p-6" data-reveal data-reveal-delay={i * 60}>
+            <span class="font-display text-3xl text-(--color-gold)/30 tnum">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="mt-2 font-display uppercase text-lg text-(--color-bone)">{v.t}</h3>
+            <p class="mt-2 text-sm text-(--color-bone-dim) leading-relaxed">{v.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Training philosophy + community -->
+  <section class="py-16 md:py-20 bg-(--color-ink)">
+    <div class="container-ik grid gap-10 md:grid-cols-2">
+      <div data-reveal>
+        <SectionHeading eyebrow="Training Philosophy" title="Fundamentals first. Always." />
+        <p class="mt-5 text-(--color-bone-dim) leading-relaxed">Technique before power. Control before contact. We build athletes on a foundation that holds up under pressure — whether your goal is fitness, confidence, or a competition record.</p>
+      </div>
+      <div data-reveal>
+        <SectionHeading eyebrow="Community & Mentorship" title="We coach people, not just fighters." />
+        <p class="mt-5 text-(--color-bone-dim) leading-relaxed">The gym is a place to grow. We invest in young people, support members through life outside the ring, and build champions in life first.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Coach preview -->
+  <section class="py-16 md:py-20 bg-(--color-charcoal) border-y border-(--color-line)">
+    <div class="container-ik">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <SectionHeading eyebrow="The Corner" title="The coaching team" class="max-w-xl" />
+        <a href="/coaches" class="text-sm font-semibold text-(--color-gold) hover:text-(--color-gold-bright) inline-flex items-center gap-1.5" data-reveal>All Coaches
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h9M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {previewCoaches.map((c) => <CoachCard coach={c} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Facility gallery -->
+  <section class="py-16 md:py-20 bg-(--color-ink)">
+    <div class="container-ik">
+      <SectionHeading eyebrow="The Facility" title="Inside the Kingdom." />
+      <div class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3">
+        {storyGallery.map((k) => (
+          <div class="relative overflow-hidden rounded-(--radius) group" data-reveal>
+            <Image src={img(k)} alt={alt(k)} widths={[300, 500]} sizes="(max-width:768px) 50vw, 25vw" class="w-full h-full object-cover aspect-square transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="relative py-24 overflow-hidden grain">
+    <div class="absolute inset-0 -z-10">
+      <Image src={img('facility-pano')} alt="" widths={[1280, 1920]} sizes="100vw" class="w-full h-full object-cover" loading="lazy" />
+      <div class="absolute inset-0 bg-(--color-ink)/85"></div>
+    </div>
+    <div class="container-ik text-center" data-reveal>
+      <h2 class="text-[length:var(--text-h1)] leading-[var(--text-h1--line-height)] max-w-3xl mx-auto">Come be part of it.</h2>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <Button href={bookHref()} size="lg" dataEvent="hero_book_click">{introCtaLabel()}</Button>
+        <Button href="/schedule" variant="outline" size="lg" dataEvent="schedule_view">View The Schedule</Button>
+      </div>
+    </div>
+  </section>
+</Layout>

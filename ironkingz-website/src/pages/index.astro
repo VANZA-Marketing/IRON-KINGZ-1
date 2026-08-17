@@ -1,0 +1,101 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProgramCard from '../components/ProgramCard.astro';
+import Button from '../components/Button.astro';
+import { Image } from 'astro:assets';
+
+import { programs } from '../data/programs';
+import { site } from '../data/site';
+import { img, alt } from '../data/images';
+import { bookHref, introCtaLabel } from '../lib/booking';
+
+const steps = [
+  { n: '01', title: 'Choose your program' },
+  { n: '02', title: 'Book your intro time' },
+  { n: '03', title: 'Meet your coach & train' },
+];
+---
+<Layout
+  title="Iron Kingz — Honolulu Combat Sports & Martial Arts Gym"
+  description={site.description}
+  path="/"
+>
+  <Hero />
+
+  <!-- 1 · PROGRAMS -->
+  <section class="py-20 md:py-28 bg-(--color-ink)">
+    <div class="container-ik">
+      <SectionHeading eyebrow="Choose Your Training" title="Four disciplines. One Kingdom." />
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {programs.map((p) => <ProgramCard program={p} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · MISSION + HOW TO START (merged) -->
+  <section class="py-20 md:py-28 bg-(--color-charcoal) border-y border-(--color-line)">
+    <div class="container-ik grid gap-12 lg:grid-cols-2 lg:items-center">
+      <div class="relative order-2 lg:order-1 overflow-hidden rounded-(--radius-lg) vignette" data-reveal>
+        <Image src={img('kids-team-belts')} alt={alt('kids-team-belts')}
+          widths={[600, 900, 1200]} sizes="(max-width: 1024px) 100vw, 50vw"
+          class="w-full h-full object-cover aspect-[4/3]" loading="lazy" />
+      </div>
+      <div class="order-1 lg:order-2" data-reveal>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="h-px w-8 bg-(--color-gold-deep)"></span>
+          <span class="eyebrow">The Kingdom</span>
+        </div>
+        <h2 class="text-[length:var(--text-h2)] leading-(--text-h2--line-height)">
+          Champions in life,<br />not only in the ring.
+        </h2>
+        <p class="mt-6 text-lg text-(--color-bone-dim) leading-relaxed">
+          More than a gym — a community where everyone, at any level, can train,
+          learn, and reach their goals. No experience needed.
+        </p>
+
+        <!-- Compact 3-step strip (replaces the separate "First Step" section) -->
+        <ol class="mt-8 space-y-3">
+          {steps.map((s) => (
+            <li class="flex items-center gap-4">
+              <span class="font-display text-2xl text-(--color-gold)/50 tnum w-8 shrink-0">{s.n}</span>
+              <span class="font-display uppercase text-(--color-bone) tracking-wide">{s.title}</span>
+            </li>
+          ))}
+        </ol>
+
+        <div class="mt-8">
+          <Button href="/our-story" variant="outline" size="lg">Our Story</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · SCHEDULE BAND (trimmed) -->
+  <section class="relative py-24 md:py-32 overflow-hidden grain">
+    <div class="absolute inset-0 -z-10">
+      <Image src={img('facility-pano-2')} alt="" widths={[1280, 1920]} sizes="100vw" class="w-full h-full object-cover" loading="lazy" />
+      <div class="absolute inset-0 bg-(--color-ink)/85"></div>
+    </div>
+    <div class="container-ik text-center" data-reveal>
+      <span class="eyebrow">Weekly Schedule</span>
+      <h2 class="mt-4 text-[length:var(--text-h2)] leading-(--text-h2--line-height) max-w-2xl mx-auto">
+        Classes seven days a week.
+      </h2>
+      <p class="mt-4 text-(--color-bone-dim)">Morning and evening. Kids and adults. Beginner to competition.</p>
+      <div class="mt-8"><Button href="/schedule" variant="outline" size="lg" dataEvent="schedule_view">View The Schedule</Button></div>
+    </div>
+  </section>
+
+  <!-- 4 · CLOSING CTA -->
+  <section class="py-16 md:py-24 bg-(--color-ink)">
+    <div class="container-ik">
+      <div class="text-center max-w-2xl mx-auto" data-reveal>
+        <span class="eyebrow">Ready When You Are</span>
+        <h2 class="mt-4 text-[length:var(--text-h1)] leading-(--text-h1--line-height)">Your first round starts with one step.</h2>
+        <div class="mt-8"><Button href={bookHref()} variant="outline" size="lg" dataEvent="hero_book_click">{introCtaLabel()}</Button></div>
+      </div>
+    </div>
+  </section>
+</Layout>
