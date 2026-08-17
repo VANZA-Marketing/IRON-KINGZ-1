@@ -1,0 +1,165 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import Button from '../components/Button.astro';
+import { memberships, dropIn, militaryDiscount, fromMonthly, tierSavings, tierTotal } from '../data/memberships';
+import { pricingFaqs } from '../data/faqs';
+import { bookHref, introCtaLabel } from '../lib/booking';
+import { faqJsonLd } from '../lib/seo';
+---
+<Layout
+  title="Memberships & Pricing — Iron Kingz Honolulu"
+  description="Iron Kingz memberships in Honolulu: adult unlimited, kids unlimited, single-discipline, and Wing Chun. Unlimited training, no long-term contracts, $10 off for military & law enforcement."
+  path="/memberships"
+  solidHeader
+  jsonLd={[faqJsonLd(pricingFaqs)]}
+>
+  <PageHero
+    eyebrow="Membership"
+    title="Train unlimited. No contracts."
+    subtitle="Every membership is unlimited training with no long-term contract. Commit for longer and the monthly rate drops — plus a free practice shirt on 6-month plans."
+    image="general-shadowbox"
+    crumbs={[{ label: 'Memberships' }]}
+  />
+
+  <!-- Pricing cards -->
+  <section class="py-16 md:py-20 bg-(--color-ink)">
+    <div class="container-ik">
+      <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        {memberships.map((m) => (
+          <div class:list={['relative flex flex-col rounded-(--radius-lg) border p-6', m.featured ? 'border-(--color-gold) bg-(--color-charcoal)' : 'border-(--color-line) bg-(--color-charcoal)']} data-reveal>
+            {m.featured && <span class="absolute -top-3 left-6 bg-(--color-charcoal) border border-(--color-gold-deep) text-(--color-gold) text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full">Most Popular</span>}
+            <h2 class="font-display uppercase text-xl leading-tight">{m.name}</h2>
+            <p class="mt-1 text-xs text-(--color-gold)">{m.ageNote}</p>
+            <p class="mt-2 text-sm text-(--color-bone-dim) min-h-[2.5rem]">{m.audience}</p>
+
+            <div class="mt-3 pb-4 border-b border-(--color-line)">
+              <p class="font-display text-4xl text-(--color-bone)">
+                <span class="text-sm text-(--color-bone-dim) align-top">from</span>
+                <span class="tnum">${fromMonthly(m)}</span><span class="text-sm text-(--color-bone-dim)">/mo</span>
+              </p>
+              <p class="mt-1 text-xs text-(--color-bone-dim)/70">on the 6-month plan · {m.commitment}</p>
+            </div>
+
+            <!-- Tier breakdown -->
+            <ul class="mt-4 space-y-2">
+              {m.tiers.map((t) => {
+                const save = tierSavings(m, t);
+                return (
+                  <li class="flex items-baseline justify-between gap-2 text-sm">
+                    <span class="text-(--color-bone-dim)">
+                      {t.label}
+                      {t.startupFee > 0 && <span class="text-(--color-bone-dim)/60"> + ${t.startupFee} startup</span>}
+                      {t.freeShirt && <span class="text-(--color-gold)"> · free shirt</span>}
+                    </span>
+                    <span class="text-right shrink-0">
+                      <span class="tnum text-(--color-bone) font-semibold">${t.monthly}</span><span class="text-(--color-bone-dim)/70 text-xs">/mo</span>
+                      {save > 0 && <span class="block text-[0.7rem] text-(--color-gold)">save ${save}</span>}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <ul class="mt-4 pt-4 border-t border-(--color-line) space-y-2 flex-1">
+              {m.benefits.map((b) => (
+                <li class="flex items-start gap-2 text-sm text-(--color-bone-dim)">
+                  <svg width="15" height="15" viewBox="0 0 16 16" class="text-(--color-gold) mt-0.5 shrink-0" aria-hidden="true"><path d="M3 8.5l3.2 3L13 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  {b}
+                </li>
+              ))}
+              {m.discountEligible && (
+                <li class="flex items-start gap-2 text-sm text-(--color-gold)">
+                  <svg width="15" height="15" viewBox="0 0 16 16" class="mt-0.5 shrink-0" aria-hidden="true"><path d="M3 8.5l3.2 3L13 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  {militaryDiscount.detail} (military & LE)
+                </li>
+              )}
+            </ul>
+            <div class="mt-5"><Button href={bookHref()} variant="outline" class="w-full" dataEvent="membership_select">{introCtaLabel()}</Button></div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Drop-in -->
+      <div class="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-(--radius-lg) border border-(--color-line) bg-(--color-charcoal) p-6" data-reveal>
+        <div>
+          <h2 class="font-display uppercase text-lg">Drop-In <span class="text-(--color-gold) tnum">${dropIn.price}</span><span class="text-sm text-(--color-bone-dim)">/day</span></h2>
+          <p class="text-sm text-(--color-bone-dim)">{dropIn.note} Great for visitors and travelers.</p>
+        </div>
+        <Button href={bookHref()} variant="outline" dataEvent="membership_select">Book a Drop-In</Button>
+      </div>
+
+      <p class="mt-6 text-xs text-(--color-bone-dim)/70 max-w-3xl">
+        All memberships are unlimited training only (no limited-day options).
+        “Save” figures compare a plan’s total against paying the monthly rate for
+        the same term, including the one-time $50 startup fee. Confirm current
+        pricing at the gym.
+      </p>
+    </div>
+  </section>
+
+  <!-- Comparison -->
+  <section class="py-16 md:py-20 bg-(--color-charcoal) border-y border-(--color-line)">
+    <div class="container-ik">
+      <SectionHeading eyebrow="Compare" title="Every plan, side by side" />
+      <div class="mt-10 overflow-x-auto">
+        <table class="w-full min-w-[48rem] text-left border-collapse">
+          <thead>
+            <tr class="border-b border-(--color-line-strong)">
+              <th class="py-4 pr-4 font-display uppercase text-sm text-(--color-gold)">Membership</th>
+              <th class="py-4 px-4 font-display uppercase text-sm text-(--color-gold)">Monthly</th>
+              <th class="py-4 px-4 font-display uppercase text-sm text-(--color-gold)">3 months</th>
+              <th class="py-4 px-4 font-display uppercase text-sm text-(--color-gold)">6 months</th>
+              <th class="py-4 px-4 font-display uppercase text-sm text-(--color-gold)">Disciplines</th>
+            </tr>
+          </thead>
+          <tbody>
+            {memberships.map((m) => (
+              <tr class="border-b border-(--color-line) align-top">
+                <td class="py-4 pr-4">
+                  <span class="font-semibold text-(--color-bone)">{m.name}</span>
+                  <span class="block text-xs text-(--color-bone-dim)/70">{m.ageNote}</span>
+                </td>
+                {m.tiers.map((t) => (
+                  <td class="py-4 px-4 text-sm text-(--color-bone-dim)">
+                    <span class="tnum text-(--color-bone)">${t.monthly}</span>/mo
+                    <span class="block text-xs text-(--color-bone-dim)/60">${tierTotal(t)} total{t.startupFee > 0 ? ' (+startup)' : ''}</span>
+                  </td>
+                ))}
+                <td class="py-4 px-4 text-sm text-(--color-bone-dim)">{m.disciplines.join(', ')}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-8 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-(--radius-lg) border border-(--color-gold)/40 bg-(--color-ink) p-5" data-reveal>
+          <h3 class="footer-head text-(--color-gold)">Military & Law Enforcement</h3>
+          <p class="mt-2 text-sm text-(--color-bone-dim)">{militaryDiscount.detail}. Ask the front desk to apply it.</p>
+        </div>
+        <div class="rounded-(--radius-lg) border border-(--color-line) bg-(--color-ink) p-5" data-reveal>
+          <h3 class="footer-head text-(--color-gold)">Free practice shirt</h3>
+          <p class="mt-2 text-sm text-(--color-bone-dim)">Every 6-month plan includes a free Iron Kingz practice shirt.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing FAQ -->
+  <section class="py-16 md:py-20 bg-(--color-ink)">
+    <div class="container-ik grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:items-start">
+      <SectionHeading eyebrow="Pricing FAQ" title="Before you join." class="lg:sticky lg:top-28" />
+      <FaqAccordion items={pricingFaqs} />
+    </div>
+  </section>
+
+  <section class="py-16 bg-(--color-charcoal) border-t border-(--color-line)">
+    <div class="container-ik text-center">
+      <h2 class="text-[length:var(--text-h2)] leading-[var(--text-h2--line-height)]">Start with a $50 intro, then choose your plan.</h2>
+      <div class="mt-8"><Button href={bookHref()} size="lg" dataEvent="hero_book_click">{introCtaLabel()}</Button></div>
+    </div>
+  </section>
+</Layout>

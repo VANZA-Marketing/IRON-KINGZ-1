@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import ScheduleExplorer from '../components/ScheduleExplorer.astro';
+import Button from '../components/Button.astro';
+import { bookHref, introCtaLabel } from '../lib/booking';
+---
+<Layout
+  title="Class Schedule — Iron Kingz Honolulu"
+  description="Full weekly class schedule for Iron Kingz in Mapunapuna, Honolulu. Filter boxing, Muay Thai, BJJ, Keiki MMA, and Wing Chun by day, program, and age."
+  path="/schedule"
+  solidHeader
+>
+  <PageHero
+    eyebrow="Weekly Schedule"
+    title="Find your class."
+    subtitle="Filter by program, day, and who it’s for. Tap any class for details, then book your intro."
+    image="facility-pano-2"
+    crumbs={[{ label: 'Schedule' }]}
+  />
+
+  <section class="py-12 md:py-16 bg-(--color-ink)">
+    <div class="container-ik">
+      <ScheduleExplorer />
+    </div>
+  </section>
+
+  <section class="py-14 bg-(--color-charcoal) border-t border-(--color-line)">
+    <div class="container-ik text-center">
+      <h2 class="text-[length:var(--text-h3)] font-display uppercase">New here? Start with an intro.</h2>
+      <p class="mt-3 text-(--color-bone-dim) max-w-xl mx-auto">We’ll match you to a beginner-friendly class and walk you through your first session.</p>
+      <div class="mt-6"><Button href={bookHref()} size="lg" dataEvent="hero_book_click">{introCtaLabel()}</Button></div>
+    </div>
+  </section>
+</Layout>
