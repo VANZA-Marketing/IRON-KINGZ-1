@@ -1,0 +1,35 @@
+---
+import { bookHref, introCtaLabel } from '../lib/booking';
+import { site } from '../data/site';
+---
+<!-- Restrained sticky bottom action bar (mobile only) -->
+<div
+  class="lg:hidden fixed bottom-0 inset-x-0 z-(--z-nav) bg-(--color-ink)/95 backdrop-blur border-t border-(--color-line) pb-[env(safe-area-inset-bottom)]"
+>
+  <div class="grid grid-cols-3 gap-2 p-2.5">
+    <a
+      href="/schedule"
+      class="inline-flex items-center justify-center gap-1.5 min-h-[48px] rounded-(--radius) border border-(--color-line-strong) text-(--color-bone) font-display uppercase text-xs tracking-wide active:scale-[0.98] transition-transform"
+      data-event="schedule_view"
+    >
+      Schedule
+    </a>
+    <a
+      href={site.phoneHref}
+      class="inline-flex items-center justify-center gap-1.5 min-h-[48px] rounded-(--radius) border border-(--color-line-strong) text-(--color-bone) font-display uppercase text-xs tracking-wide active:scale-[0.98] transition-transform"
+      data-event="phone_click"
+      aria-label={`Call Iron Kingz at ${site.phone}`}
+    >
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11.4 11.4 0 0 0 3.6.58 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.58 3.6a1 1 0 0 1-.25 1l-2.23 2.2Z" fill="currentColor"/></svg>
+      Call
+    </a>
+    <a
+      href={bookHref()}
+      class="inline-flex items-center justify-center min-h-[48px] rounded-(--radius) bg-(--color-bone) text-(--color-ink) font-display font-bold uppercase text-xs tracking-wide active:scale-[0.98] transition-transform"
+      data-event="hero_book_click"
+      aria-label={introCtaLabel()}
+    >
+      Book Intro
+    </a>
+  </div>
+</div>
