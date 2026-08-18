@@ -62,6 +62,21 @@ export const coaches: Coach[] = [
     privateTraining: false, // TODO(owner): confirm availability.
   },
   {
+    slug: 'kru-carlton',
+    name: 'Kru Carlton',
+    nameConfirmed: true, // Provided by owner.
+    role: 'Muay Thai Coach',
+    program: 'muay-thai',
+    discipline: 'Muay Thai & Kickboxing',
+    image: 'coach-carlton', // Headshot provided by owner.
+    imagePos: 'object-[center_25%]',
+    bio: 'Kru Carlton coaches Muay Thai at Iron Kingz, guiding strikers from their very first round through the competition team. His classes stay grounded in clean fundamentals, timing, and ring IQ — with a patient, detail-first approach that works for beginners and fighters alike.',
+    philosophy: 'Sharp basics beat flashy every time.',
+    credentials: ['HFA Muay Thai'],
+    classesTaught: ['Muay Thai Fundamentals', 'Kickboxing', 'Competition Team'],
+    privateTraining: false,
+  },
+  {
     slug: 'jace-kaopua',
     name: 'Jace Kaopua',
     nameConfirmed: true, // Named in the brief for 808 Top Team.
