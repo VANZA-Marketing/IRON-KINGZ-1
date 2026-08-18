@@ -1,0 +1,6 @@
+KRU CARLTON UPDATE — one drag, done.
+
+On GitHub: open your repo -> click into the "ironkingz-website" folder
+-> Add file -> Upload files -> drag the "src" folder (from here) into the box
+-> Commit changes.  GitHub keeps the folder paths and updates the 3 files.
+Then Vercel redeploys automatically.
