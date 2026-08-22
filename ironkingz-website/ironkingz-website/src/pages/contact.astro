@@ -1,0 +1,189 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+import Button from '../components/Button.astro';
+import { site } from '../data/site';
+import { contactFaqs } from '../data/faqs';
+import { programs } from '../data/programs';
+import { bookHref, introCtaLabel } from '../lib/booking';
+import { faqJsonLd } from '../lib/seo';
+---
+<Layout
+  title="Contact & Location — Iron Kingz Honolulu"
+  description={`Contact Iron Kingz at ${site.addressLine}. Call ${site.phone}, email ${site.email}, get directions, and see our hours in Mapunapuna, Honolulu.`}
+  path="/contact"
+  solidHeader
+  jsonLd={[faqJsonLd(contactFaqs)]}
+>
+  <PageHero
+    eyebrow="Find The Kingdom"
+    title="Get in touch."
+    subtitle="Questions about programs, schedule, or getting started? Call, email, or send a message — and we’ll help you take the first step."
+    image="facility-wide"
+    crumbs={[{ label: 'Contact' }]}
+  />
+
+  <section class="py-16 md:py-20 bg-(--color-ink)">
+    <div class="container-ik grid gap-10 lg:grid-cols-2 lg:items-start">
+      <!-- Details + map -->
+      <div class="space-y-8" data-reveal>
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div>
+            <h2 class="footer-head text-(--color-gold)">Location</h2>
+            <a href={site.mapsUrl} target="_blank" rel="noopener noreferrer" class="mt-2 block text-(--color-bone) hover:text-(--color-gold)">
+              {site.address.street}<br />{site.address.city}, {site.address.region} {site.address.postalCode}
+            </a>
+          </div>
+          <div>
+            <h2 class="footer-head text-(--color-gold)">Call & Email</h2>
+            <p class="mt-2"><a href={site.phoneHref} class="text-(--color-bone) hover:text-(--color-gold)" data-event="phone_click">{site.phone}</a></p>
+            <p><a href={`mailto:${site.email}`} class="text-(--color-bone) hover:text-(--color-gold) break-all" data-event="email_click">{site.email}</a></p>
+          </div>
+          <div>
+            <h2 class="footer-head text-(--color-gold)">Hours</h2>
+            <ul class="mt-2 text-sm text-(--color-bone-dim) space-y-1">
+              {site.hours.map((h) => (
+                <li class="flex justify-between gap-4 max-w-xs">
+                  <span>{h.day}</span>
+                  <span class="tnum text-right">{h.closed ? 'Closed' : h.open2 ? `${h.open}–${h.close}, ${h.open2}–${h.close2}` : `${h.open}–${h.close}`}</span>
+                </li>
+              ))}
+            </ul>
+            <p class="mt-2 text-xs text-(--color-bone-dim)/70">Saturday classes by appointment. Closed Sunday.</p>
+          </div>
+          <div>
+            <h2 class="footer-head text-(--color-gold)">Parking</h2>
+            {/* TODO(owner): supply parking instructions. */}
+            <p class="mt-2 text-sm text-(--color-bone-dim)">Contact us for parking details.</p>
+            <div class="mt-3"><Button href={site.directionsUrl} variant="outline" size="md" dataEvent="directions_click">Get Directions</Button></div>
+          </div>
+        </div>
+
+        <div class="relative h-72 rounded-(--radius-lg) overflow-hidden border border-(--color-line)">
+          <iframe title={`Map to Iron Kingz, ${site.addressLine}`} src={site.mapEmbedUrl} loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="absolute inset-0 w-full h-full grayscale contrast-125"></iframe>
+        </div>
+      </div>
+
+      <!-- Contact form -->
+      <div class="rounded-(--radius-lg) border border-(--color-line) bg-(--color-charcoal) p-6 md:p-8" data-reveal>
+        <SectionHeading eyebrow="Message Us" title="Send a message" />
+        <form id="contact-form" action="https://formsubmit.co/s.kapuwai@ironkingz.com" method="POST" class="mt-6 space-y-4" novalidate>
+          <!-- FormSubmit config — emails each submission to the gym -->
+          <input type="hidden" name="_subject" value="New message from ironkingz.com" />
+          <input type="hidden" name="_template" value="table" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_next" value="https://www.ironkingz.com/contact" />
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true" />
+
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label for="cf-name" class="field-label">Name <span class="text-(--color-gold)">*</span></label>
+              <input id="cf-name" name="name" type="text" required autocomplete="name" class="field" />
+              <p class="field-error" data-error-for="name"></p>
+            </div>
+            <div>
+              <label for="cf-phone" class="field-label">Phone</label>
+              <input id="cf-phone" name="phone" type="tel" autocomplete="tel" class="field" />
+            </div>
+          </div>
+
+          <div>
+            <label for="cf-email" class="field-label">Email <span class="text-(--color-gold)">*</span></label>
+            <input id="cf-email" name="email" type="email" required autocomplete="email" class="field" />
+            <p class="field-error" data-error-for="email"></p>
+          </div>
+
+          <div>
+            <label for="cf-program" class="field-label">Program interest</label>
+            <select id="cf-program" name="program" class="field">
+              <option value="">Not sure yet</option>
+              {programs.map((p) => <option value={p.slug}>{p.name}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label for="cf-message" class="field-label">Message <span class="text-(--color-gold)">*</span></label>
+            <textarea id="cf-message" name="message" rows="5" required class="field resize-y"></textarea>
+            <p class="field-error" data-error-for="message"></p>
+          </div>
+
+          <button type="submit" class="inline-flex w-full items-center justify-center min-h-[52px] rounded-(--radius) bg-(--color-gold) text-(--color-ink) font-display font-extrabold uppercase tracking-wide active:scale-[0.99] transition-transform" data-event="contact_submit">
+            Send Message
+          </button>
+
+          <p id="cf-status" class="text-sm" role="status" aria-live="polite"></p>
+          <p class="text-xs text-(--color-bone-dim)/70">
+            {/* TODO(owner): connect a form backend (e.g. Formspree/serverless) and set site.contact endpoint. Until then this opens your email app. */}
+            Prefer to talk? Call <a href={site.phoneHref} class="text-(--color-gold)">{site.phone}</a>.
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact FAQ -->
+  <section class="py-16 md:py-20 bg-(--color-charcoal) border-y border-(--color-line)">
+    <div class="container-ik grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:items-start">
+      <SectionHeading eyebrow="Quick Answers" title="Common questions" class="lg:sticky lg:top-28" />
+      <FaqAccordion items={contactFaqs} />
+    </div>
+  </section>
+
+  <section class="py-16 bg-(--color-ink)">
+    <div class="container-ik text-center">
+      <h2 class="text-[length:var(--text-h2)] leading-[var(--text-h2--line-height)]">Rather just start training?</h2>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <Button href={bookHref()} size="lg" dataEvent="hero_book_click">{introCtaLabel()}</Button>
+        <Button href={site.phoneHref} variant="outline" size="lg" dataEvent="phone_click">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11.4 11.4 0 0 0 3.6.58 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.58 3.6a1 1 0 0 1-.25 1l-2.23 2.2Z" fill="currentColor"/></svg>
+          Call Now
+        </Button>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .field-label { display:block; font-size:0.8rem; font-weight:600; color:var(--color-bone); margin-bottom:0.35rem; }
+  .field {
+    width:100%; background:var(--color-ink); border:1px solid var(--color-line-strong);
+    border-radius:var(--radius); padding:0.7rem 0.85rem; color:var(--color-bone);
+    font-size:0.95rem; min-height:44px; transition:border-color 0.15s ease;
+  }
+  .field:focus { outline:2px solid var(--color-gold-bright); outline-offset:1px; border-color:transparent; }
+  .field[aria-invalid="true"] { border-color:var(--color-danger); }
+  .field-error { color:var(--color-danger); font-size:0.78rem; margin-top:0.3rem; min-height:1rem; }
+</style>
+
+<script is:inline>
+  (function () {
+    const form = document.getElementById('contact-form');
+    if (!form) return;
+    const status = document.getElementById('cf-status');
+    const setErr = (name, msg) => {
+      const el = form.querySelector(`[data-error-for="${name}"]`);
+      const field = form.querySelector(`[name="${name}"]`);
+      if (el) el.textContent = msg || '';
+      if (field) field.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    };
+    form.addEventListener('submit', (e) => {
+      if (status) { status.textContent = ''; status.className = 'text-sm'; }
+      const data = Object.fromEntries(new FormData(form).entries());
+      let ok = true;
+      ['name', 'email', 'message'].forEach((f) => setErr(f, ''));
+      if (!String(data.name || '').trim()) { setErr('name', 'Please enter your name.'); ok = false; }
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(data.email || ''))) { setErr('email', 'Please enter a valid email.'); ok = false; }
+      if (String(data.message || '').trim().length < 5) { setErr('message', 'Please add a short message.'); ok = false; }
+      if (!ok) {
+        e.preventDefault();
+        const firstInvalid = form.querySelector('[aria-invalid="true"]');
+        if (firstInvalid) firstInvalid.focus();
+        return;
+      }
+      // Valid → let the form POST to FormSubmit, which emails us and then redirects.
+      if (status) { status.textContent = 'Sending…'; status.className = 'text-sm text-(--color-bone-dim)'; }
+    });
+  })();
+</script>
