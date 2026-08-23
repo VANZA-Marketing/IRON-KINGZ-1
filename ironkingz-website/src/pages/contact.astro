@@ -69,11 +69,13 @@ import { faqJsonLd } from '../lib/seo';
       <!-- Contact form -->
       <div class="rounded-(--radius-lg) border border-(--color-line) bg-(--color-charcoal) p-6 md:p-8" data-reveal>
         <SectionHeading eyebrow="Message Us" title="Send a message" />
-        <form id="contact-form" class="mt-6 space-y-4" novalidate>
-          <!-- Honeypot (spam protection) -->
-          <div class="hidden" aria-hidden="true">
-            <label>Leave blank<input type="text" name="company" tabindex="-1" autocomplete="off" /></label>
-          </div>
+        <form id="contact-form" action="https://formsubmit.co/s.kapuwai@ironkingz.com" method="POST" class="mt-6 space-y-4" novalidate>
+          <!-- FormSubmit config — emails each submission to the gym -->
+          <input type="hidden" name="_subject" value="New message from ironkingz.com" />
+          <input type="hidden" name="_template" value="table" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_next" value="https://www.ironkingz.com/contact" />
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none" aria-hidden="true" />
 
           <div class="grid sm:grid-cols-2 gap-4">
             <div>
@@ -155,7 +157,7 @@ import { faqJsonLd } from '../lib/seo';
   .field-error { color:var(--color-danger); font-size:0.78rem; margin-top:0.3rem; min-height:1rem; }
 </style>
 
-<script is:inline define:vars={{ email: site.email }}>
+<script is:inline>
   (function () {
     const form = document.getElementById('contact-form');
     if (!form) return;
@@ -167,11 +169,7 @@ import { faqJsonLd } from '../lib/seo';
       if (field) field.setAttribute('aria-invalid', msg ? 'true' : 'false');
     };
     form.addEventListener('submit', (e) => {
-      e.preventDefault();
       if (status) { status.textContent = ''; status.className = 'text-sm'; }
-      // Honeypot: silently succeed for bots
-      if (form.company && form.company.value) return;
-
       const data = Object.fromEntries(new FormData(form).entries());
       let ok = true;
       ['name', 'email', 'message'].forEach((f) => setErr(f, ''));
@@ -179,22 +177,13 @@ import { faqJsonLd } from '../lib/seo';
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(data.email || ''))) { setErr('email', 'Please enter a valid email.'); ok = false; }
       if (String(data.message || '').trim().length < 5) { setErr('message', 'Please add a short message.'); ok = false; }
       if (!ok) {
+        e.preventDefault();
         const firstInvalid = form.querySelector('[aria-invalid="true"]');
         if (firstInvalid) firstInvalid.focus();
         return;
       }
-
-      // No backend configured yet → open the user's email client (works today).
-      const subject = encodeURIComponent(`Website enquiry — ${data.name}`);
-      const body = encodeURIComponent(
-        `Name: ${data.name}\nEmail: ${data.email}\nPhone: ${data.phone || '-'}\nProgram: ${data.program || 'Not sure'}\n\n${data.message}`
-      );
-      window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-      if (status) {
-        status.textContent = 'Opening your email app to send… If nothing happens, email us directly at ' + email + '.';
-        status.className = 'text-sm text-(--color-success)';
-      }
-      form.reset();
+      // Valid → let the form POST to FormSubmit, which emails us and then redirects.
+      if (status) { status.textContent = 'Sending…'; status.className = 'text-sm text-(--color-bone-dim)'; }
     });
   })();
 </script>

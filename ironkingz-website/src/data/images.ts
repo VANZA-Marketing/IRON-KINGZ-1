@@ -47,6 +47,7 @@ export const photoMeta: Record<string, PhotoMeta> = {
   'coach-thomas': { alt: 'Sifu Thomas Hulama, Iron Kingz Wing Chun instructor, holding a long pole on a black lava field', category: 'coaches' },
   'coach-founder': { alt: 'Iron Kingz founder and head boxing coach with a young champion holding a title belt', category: 'coaches' },
   'coach-kru-red': { alt: 'Kru Red, HFA Muay Thai head coach at Iron Kingz', category: 'coaches' },
+  'coach-carlton': { alt: 'Kru Carlton, Muay Thai coach at Iron Kingz', category: 'coaches' },
 
 
   'coaches-team': { alt: 'The Iron Kingz coaching team standing together in black shirts on the mats', category: 'coaches' },

@@ -4,6 +4,8 @@ export interface NavItem {
   href: string;
   /** Label used for the parent/overview link inside its own dropdown. */
   overviewLabel?: string;
+  /** External link — opens in a new tab. */
+  external?: boolean;
   children?: { label: string; href: string }[];
 }
 
@@ -30,6 +32,7 @@ export const mainNav: NavItem[] = [
       { label: 'Coaches', href: '/coaches' },
     ],
   },
+  { label: 'Shop', href: 'https://www.breakpointfc.com/collections/iron-kingz', external: true },
   { label: 'Contact', href: '/contact' },
   { label: 'Waiver', href: '/waiver' },
 ];
